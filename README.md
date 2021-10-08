@@ -12,4 +12,3 @@
 > ex:\
 **sqlc init**
 
-"# chi-bank" 
