@@ -2,7 +2,12 @@ package api
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
+)
+
+var (
+	ErrRequestBody = errors.New("invalid request body")
 )
 
 type ErrorResponse struct {
@@ -10,13 +15,13 @@ type ErrorResponse struct {
 	Message    string `json:"message"`
 }
 
-func MarshalPayload(w http.ResponseWriter, code int, payload interface{}) {
+func Success(w http.ResponseWriter, code int, payload interface{}) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(code)
 	json.NewEncoder(w).Encode(payload)
 }
 
-func MarshalError(w http.ResponseWriter, code int, err error) {
+func Error(w http.ResponseWriter, code int, err error) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(code)
 	response := ErrorResponse{

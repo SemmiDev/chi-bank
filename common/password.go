@@ -1,4 +1,4 @@
-package password
+package common
 
 import (
 	"fmt"
@@ -7,7 +7,7 @@ import (
 )
 
 // HashPassword returns the bcrypt hash of the password
-func Hash(password string) (string, error) {
+func HashPassword(password string) (string, error) {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		return "", fmt.Errorf("failed to hash password: %w", err)
@@ -16,6 +16,6 @@ func Hash(password string) (string, error) {
 }
 
 // CheckPassword checks if the provided password is correct or not
-func Check(password string, hashedPassword string) error {
+func CheckPassword(password string, hashedPassword string) error {
 	return bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
 }

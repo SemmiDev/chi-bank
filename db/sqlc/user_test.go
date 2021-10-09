@@ -2,23 +2,22 @@ package db
 
 import (
 	"context"
+	"github.com/SemmiDev/chi-bank/common"
 	"testing"
 	"time"
 
-	"github.com/SemmiDev/chi-bank/util/password"
-	"github.com/SemmiDev/chi-bank/util/random"
 	"github.com/stretchr/testify/require"
 )
 
 func createRandomUser(t *testing.T) User {
-	hashedPassword, err := password.Hash(random.Str(6))
+	hashedPassword, err := common.HashPassword(common.RandomString(6))
 	require.NoError(t, err)
 
 	arg := CreateUserParams{
-		Username:       random.Owner(),
+		Username:       common.RandomOwner(),
 		HashedPassword: hashedPassword,
-		FullName:       random.Owner(),
-		Email:          random.Email(),
+		FullName:       common.RandomOwner(),
+		Email:          common.RandomEmail(),
 	}
 
 	user, err := testQueries.CreateUser(context.Background(), arg)

@@ -5,14 +5,14 @@ import (
 	"testing"
 	"time"
 
-	"github.com/SemmiDev/chi-bank/util/random"
+	"github.com/SemmiDev/chi-bank/common"
 	"github.com/stretchr/testify/require"
 )
 
 func createRandomEntry(t *testing.T, account Account) Entry {
 	arg := CreateEntryParams{
 		AccountID: account.ID,
-		Amount:    random.Money(),
+		Amount:    common.RandomMoney(),
 	}
 
 	entry, err := testQueries.CreateEntry(context.Background(), arg)

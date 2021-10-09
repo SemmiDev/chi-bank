@@ -1,13 +1,17 @@
 package api
 
 import (
+	"context"
 	"fmt"
+	"github.com/SemmiDev/chi-bank/common"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
 
+	"github.com/SemmiDev/chi-bank/common/logger"
+	"github.com/SemmiDev/chi-bank/common/token"
 	db "github.com/SemmiDev/chi-bank/db/sqlc"
-	"github.com/SemmiDev/chi-bank/util/config"
-	"github.com/SemmiDev/chi-bank/util/logger"
-	"github.com/SemmiDev/chi-bank/util/token"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
@@ -15,7 +19,7 @@ import (
 
 // Server serves HTTP requests for our banking service.
 type Server struct {
-	config     config.Env
+	config     common.Config
 	store      db.Store
 	tokenMaker token.Maker
 	logger     *logger.Logger
@@ -23,7 +27,7 @@ type Server struct {
 }
 
 // NewServer creates a new HTTP server and set up routing.
-func NewServer(config config.Env, store db.Store) (*Server, error) {
+func NewServer(config common.Config, store db.Store) (*Server, error) {
 	tokenMaker, err := token.NewPasetoMaker(config.TokenSymmetricKey)
 	if err != nil {
 		return nil, fmt.Errorf("cannot create token maker: %w", err)
@@ -49,21 +53,54 @@ func (s *Server) setupRouter() {
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 
-	r.Options("/*", func(w http.ResponseWriter, r *http.Request) {})
-	// api := r.Route("/api/v1", func(router chi.Router) {})
+	r.Get("/health", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/plain")
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("."))
+	})
 
-	// api.Route("/accounts", func(r chi.Router) {
-	// 	r.Post("/users", s.createUserHandler()),
-	// }
+	r.Route("/api/v1", func(r chi.Router) {
+		r.Route("/users", func(r chi.Router) {
+			r.Post("/", s.CreateUserHandler)
+			r.Post("/login", s.LoginUserHandler)
+		})
+	})
+
 
 	s.router = r
 }
 
 // Start runs the HTTP server on a specific address.
 func (s *Server) Start(address string) error {
-	err := http.ListenAndServe(address, s.router)
-	if err != nil {
+	httpServer := &http.Server{
+		Addr: address,
+		Handler: s.router,
+	}
+
+	idleConsClosed := make(chan struct{})
+	go func() {
+		defer close(idleConsClosed)
+
+		sigint := make(chan os.Signal, 1)
+		signal.Notify(sigint, os.Interrupt)
+		signal.Notify(sigint, syscall.SIGTERM)
+
+		<-sigint
+
+		err := httpServer.Shutdown(context.Background())
+		if err != nil {
+			s.logger.Error().Msg("failed to shutdown server")
+		}
+	}()
+
+	s.logger.Info().Msgf("starting server on %s", httpServer.Addr)
+	err := httpServer.ListenAndServe()
+	if err != nil && err != http.ErrServerClosed {
 		return err
 	}
+
+	<-idleConsClosed
+
+	s.logger.Info().Msg("stopped server gracefully")
 	return nil
 }

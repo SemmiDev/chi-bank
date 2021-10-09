@@ -8,7 +8,7 @@ import (
 	"flag"
 	"time"
 
-	"github.com/SemmiDev/chi-bank/util/logger"
+	"github.com/SemmiDev/chi-bank/common/logger"
 	"github.com/rs/zerolog"
 )
 

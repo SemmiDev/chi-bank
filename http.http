@@ -3,8 +3,18 @@ Accept: application/json
 Content-Type: application/json
 
 {
-    "username": "sammidev2",
-    "password": "sammidev2",
-    "full_name": "2342342",
-    "email": "sammidev2"
+    "username": "sammi",
+    "password": "sammi123",
+    "full_name": "Sammi Aldhi Yanto",
+    "email": "Sammidev@gmail.com"
+}
+
+###
+POST http://localhost:8080/api/v1/users/login
+Accept: application/json
+Content-Type: application/json
+
+{
+  "username": "sammi",
+  "password": "sammi123"
 }

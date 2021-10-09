@@ -1,21 +1,24 @@
 package api
 
 import (
+	"database/sql"
 	"encoding/json"
+	"errors"
+	"github.com/SemmiDev/chi-bank/common"
+	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/go-ozzo/ozzo-validation/v4/is"
 	"net/http"
+	"strings"
 	"time"
 
 	db "github.com/SemmiDev/chi-bank/db/sqlc"
-	"github.com/SemmiDev/chi-bank/util/password"
-	"github.com/SemmiDev/chi-bank/util/validator"
-	"github.com/lib/pq"
 )
 
 type createUserRequest struct {
-	Username string `json:"username" binding:"required,alphanum"`
-	Password string `json:"password" binding:"required,min=6"`
-	FullName string `json:"full_name" binding:"required"`
-	Email    string `json:"email" binding:"required,email"`
+	Username string `json:"username"`
+	Password string `json:"password"`
+	FullName string `json:"full_name"`
+	Email    string `json:"email"`
 }
 
 type userResponse struct {
@@ -36,23 +39,27 @@ func newUserResponse(user db.User) userResponse {
 	}
 }
 
-func (s *Server) createUserHandler(w http.ResponseWriter, r *http.Request) {
+func (s *Server) CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 	var req createUserRequest
 	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
-		MarshalError(w, http.StatusBadRequest, ErrRequestBody)
+		Error(w, http.StatusBadRequest, ErrRequestBody)
 		return
 	}
 
-	err = validator.Struct(req)
-	if err != nil {
-		MarshalError(w, http.StatusBadRequest, err)
+	if err = validation.ValidateStruct(&req,
+		validation.Field(&req.Username, validation.Required, is.Alphanumeric),
+		validation.Field(&req.Password, validation.Required, validation.Length(6,100)),
+		validation.Field(&req.FullName, validation.Required),
+		validation.Field(&req.Email, validation.Required, is.Email),
+	); err != nil {
+		Error(w, http.StatusBadRequest, err)
 		return
 	}
 
-	hashedPassword, err := password.Hash(req.Password)
+	hashedPassword, err := common.HashPassword(req.Password)
 	if err != nil {
-		MarshalError(w, http.StatusInternalServerError, err)
+		Error(w, http.StatusInternalServerError, err)
 		return
 	}
 
@@ -65,17 +72,75 @@ func (s *Server) createUserHandler(w http.ResponseWriter, r *http.Request) {
 
 	user, err := s.store.CreateUser(r.Context(), arg)
 	if err != nil {
-		if pqErr, ok := err.(*pq.Error); ok {
-			switch pqErr.Code.Name() {
-			case "unique_violation":
-				MarshalError(w, http.StatusForbidden, err)
-				return
-			}
+		if strings.Contains(err.Error(), "duplicate key value") {
+			Error(w, http.StatusForbidden, errors.New("username or email already taken"))
+			return
 		}
-		MarshalError(w, http.StatusInternalServerError, err)
-		return
+		Error(w, http.StatusInternalServerError, err)
 	}
 
 	rsp := newUserResponse(user)
-	MarshalPayload(w, http.StatusCreated, rsp)
+	Success(w, http.StatusCreated, rsp)
+	return
+}
+
+
+type loginUserRequest struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
+type loginUserResponse struct {
+	AccessToken string       `json:"access_token"`
+	User        userResponse `json:"user"`
+}
+
+func (s *Server) LoginUserHandler(w http.ResponseWriter, r *http.Request) {
+	var req loginUserRequest
+	err := json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		Error(w, http.StatusBadRequest, ErrRequestBody)
+		return
+	}
+
+	if err = validation.ValidateStruct(&req,
+		validation.Field(&req.Username, validation.Required, is.Alphanumeric),
+		validation.Field(&req.Password, validation.Required, validation.Length(6,100)),
+	); err != nil {
+		Error(w, http.StatusBadRequest, err)
+		return
+	}
+
+	user, err := s.store.GetUser(r.Context(), req.Username)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			Error(w, http.StatusNotFound, err)
+			return
+		}
+		Error(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	err = common.CheckPassword(req.Password, user.HashedPassword)
+	if err != nil {
+		Error(w, http.StatusUnauthorized, errors.New("wrong password"))
+		return
+	}
+
+	accessToken, err := s.tokenMaker.CreateToken(
+		user.Username,
+		s.config.AccessTokenDuration,
+	)
+	if err != nil {
+		Error(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	rsp := loginUserResponse{
+		AccessToken: accessToken,
+		User:        newUserResponse(user),
+	}
+
+	Success(w, http.StatusCreated, rsp)
+	return
 }

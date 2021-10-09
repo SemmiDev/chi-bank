@@ -2,10 +2,10 @@ package db
 
 import (
 	"context"
+	"github.com/SemmiDev/chi-bank/common"
 	"testing"
 	"time"
 
-	"github.com/SemmiDev/chi-bank/util/random"
 	"github.com/stretchr/testify/require"
 )
 
@@ -13,7 +13,7 @@ func createRandomTransfer(t *testing.T, account1, account2 Account) Transfer {
 	arg := CreateTransferParams{
 		FromAccountID: account1.ID,
 		ToAccountID:   account2.ID,
-		Amount:        random.Money(),
+		Amount:        common.RandomMoney(),
 	}
 
 	transfer, err := testQueries.CreateTransfer(context.Background(), arg)

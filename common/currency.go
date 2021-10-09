@@ -1,4 +1,4 @@
-package currency
+package common
 
 // Constants for all supported currencies
 const (

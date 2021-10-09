@@ -1,19 +1,19 @@
 package token
 
 import (
+	"github.com/SemmiDev/chi-bank/common"
 	"testing"
 	"time"
 
-	"github.com/SemmiDev/chi-bank/util/random"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/stretchr/testify/require"
 )
 
 func TestJWTMaker(t *testing.T) {
-	maker, err := NewJWTMaker(random.Str(32))
+	maker, err := NewJWTMaker(common.RandomString(32))
 	require.NoError(t, err)
 
-	username := random.Owner()
+	username := common.RandomOwner()
 	duration := time.Minute
 
 	issuedAt := time.Now()
@@ -34,10 +34,10 @@ func TestJWTMaker(t *testing.T) {
 }
 
 func TestExpiredJWTToken(t *testing.T) {
-	maker, err := NewJWTMaker(random.Str(32))
+	maker, err := NewJWTMaker(common.RandomString(32))
 	require.NoError(t, err)
 
-	token, err := maker.CreateToken(random.Owner(), -time.Minute)
+	token, err := maker.CreateToken(common.RandomOwner(), -time.Minute)
 	require.NoError(t, err)
 	require.NotEmpty(t, token)
 
@@ -48,14 +48,14 @@ func TestExpiredJWTToken(t *testing.T) {
 }
 
 func TestInvalidJWTTokenAlgNone(t *testing.T) {
-	payload, err := NewPayload(random.Owner(), time.Minute)
+	payload, err := NewPayload(common.RandomOwner(), time.Minute)
 	require.NoError(t, err)
 
 	jwtToken := jwt.NewWithClaims(jwt.SigningMethodNone, payload)
 	token, err := jwtToken.SignedString(jwt.UnsafeAllowNoneSignatureType)
 	require.NoError(t, err)
 
-	maker, err := NewJWTMaker(random.Str(32))
+	maker, err := NewJWTMaker(common.RandomString(32))
 	require.NoError(t, err)
 
 	payload, err = maker.VerifyToken(token)

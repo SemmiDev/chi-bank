@@ -1,18 +1,18 @@
 package token
 
 import (
+	"github.com/SemmiDev/chi-bank/common"
 	"testing"
 	"time"
 
-	"github.com/SemmiDev/chi-bank/util/random"
 	"github.com/stretchr/testify/require"
 )
 
 func TestPasetoMaker(t *testing.T) {
-	maker, err := NewPasetoMaker(random.Str(32))
+	maker, err := NewPasetoMaker(common.RandomString(32))
 	require.NoError(t, err)
 
-	username := random.Owner()
+	username := common.RandomOwner()
 	duration := time.Minute
 
 	issuedAt := time.Now()
@@ -33,10 +33,10 @@ func TestPasetoMaker(t *testing.T) {
 }
 
 func TestExpiredPasetoToken(t *testing.T) {
-	maker, err := NewPasetoMaker(random.Str(32))
+	maker, err := NewPasetoMaker(common.RandomString(32))
 	require.NoError(t, err)
 
-	token, err := maker.CreateToken(random.Owner(), -time.Minute)
+	token, err := maker.CreateToken(common.RandomOwner(), -time.Minute)
 	require.NoError(t, err)
 	require.NotEmpty(t, token)
 

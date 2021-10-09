@@ -3,10 +3,10 @@ package db
 import (
 	"context"
 	"database/sql"
+	"github.com/SemmiDev/chi-bank/common"
 	"testing"
 	"time"
 
-	"github.com/SemmiDev/chi-bank/util/random"
 	"github.com/stretchr/testify/require"
 )
 
@@ -15,8 +15,8 @@ func createRandomAccount(t *testing.T) Account {
 
 	arg := CreateAccountParams{
 		Owner:    user.Username,
-		Balance:  random.Money(),
-		Currency: random.Currency(),
+		Balance:  common.RandomMoney(),
+		Currency: common.RandomCurrency(),
 	}
 
 	account, err := testQueries.CreateAccount(context.Background(), arg)
@@ -55,7 +55,7 @@ func TestUpdateAccount(t *testing.T) {
 
 	arg := UpdateAccountParams{
 		ID:      account1.ID,
-		Balance: random.Money(),
+		Balance: common.RandomMoney(),
 	}
 
 	account2, err := testQueries.UpdateAccount(context.Background(), arg)
