@@ -24,9 +24,9 @@ func Success(w http.ResponseWriter, code int, payload interface{}) {
 func Error(w http.ResponseWriter, code int, err error) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(code)
-	response := ErrorResponse{
+	rsp := ErrorResponse {
 		Message:    err.Error(),
 		StatusText: http.StatusText(code),
 	}
-	json.NewEncoder(w).Encode(response)
+	json.NewEncoder(w).Encode(rsp)
 }

@@ -4,13 +4,14 @@ package common
 const (
 	USD = "USD"
 	EUR = "EUR"
-	CAD = "CAD"
+	IDR = "IDR"
+	RM = "RM"
 )
 
 // IsSupportedCurrency returns true if the currency is supported
 func IsSupportedCurrency(currency string) bool {
 	switch currency {
-	case USD, EUR, CAD:
+	case USD, EUR, IDR, RM:
 		return true
 	}
 	return false

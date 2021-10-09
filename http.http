@@ -3,8 +3,8 @@ Accept: application/json
 Content-Type: application/json
 
 {
-    "username": "sammi",
-    "password": "sammi123",
+    "username": "sammidev",
+    "password": "sammidev123",
     "full_name": "Sammi Aldhi Yanto",
     "email": "Sammidev@gmail.com"
 }
@@ -15,6 +15,30 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "username": "sammi",
-  "password": "sammi123"
+  "username": "sammidev",
+  "password": "sammidev123"
 }
+
+###
+POST http://localhost:8080/api/v1/accounts
+Accept: application/json
+Content-Type: application/json
+Authorization: bearer v2.local.ACSXCcJ2Wz_tufqQMpwjk_ZJxqXpkf-4c_O7NmZUFRzSR65HeXKEkPmOaXuI-S81zRmR47WXnkrm_v-U7mn-8_We6fBEfD05Fba3B1dChSss8g1XGeVF22Iu0L3osRAguo-zsbOdmsC__Jp6kohd5-uub-ZBCXIxz3cgmei_W6wuzTlVYAKSXe5NOe7m7cMLMtLxfKHesU_oaAf0W-6psmkiBxDZXAvrYiOj6T69-kWDTFonMG_c9ssawz6yFOLWHxOw3LCJeO6uJunG.bnVsbA
+
+{
+  "currency": "IDR"
+}
+
+###
+
+GET http://localhost:8080/api/v1/accounts/1
+Accept: application/json
+Content-Type: application/json
+Authorization: bearer v2.local.sz1xPoHU9JxjtCiHnRy3_62mgQzGKVUZviFYPw136EH-nDKlCUb7m9ZUxaOcizv2B703a9_AUiNdeO0Nkf4Edr3AVNX5mXNxXWjcacaSVSw1LnfqqMddOgnpySXuhASeL0X7_fY999qe4hjrfH7f4gA5xrhV7Me9ddLOH_eix8HHrD0RvZTqv77Ft94sPFsC5P-HayWQ1Lx7PS5DtN4wJa9RD6V5ONSCY1IHdE0wBwNz0nBP58rRfksHqfatrcavtyCh0E_-6RCTA85D.bnVsbA
+
+
+###
+
+GET http://localhost:8080/api/v1/accounts?page_id=1&page_size=10
+Accept: application/json
+Authorization: bearer v2.local.sz1xPoHU9JxjtCiHnRy3_62mgQzGKVUZviFYPw136EH-nDKlCUb7m9ZUxaOcizv2B703a9_AUiNdeO0Nkf4Edr3AVNX5mXNxXWjcacaSVSw1LnfqqMddOgnpySXuhASeL0X7_fY999qe4hjrfH7f4gA5xrhV7Me9ddLOH_eix8HHrD0RvZTqv77Ft94sPFsC5P-HayWQ1Lx7PS5DtN4wJa9RD6V5ONSCY1IHdE0wBwNz0nBP58rRfksHqfatrcavtyCh0E_-6RCTA85D.bnVsbA
