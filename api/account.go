@@ -27,11 +27,8 @@ func (s *Server) createAccount(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err = validation.ValidateStruct(&req,
-		validation.Field(&req.Currency, validation.Required, validation.In(
-			common.USD,
-			common.EUR,
-			common.IDR,
-			common.RM),
+		validation.Field(&req.Currency, validation.Required,
+			validation.In(common.USD, common.EUR, common.IDR, common.RM),
 		),
 	); err != nil {
 		if err == validation.ErrInInvalid {
@@ -92,8 +89,8 @@ func (s *Server) getAccount(w http.ResponseWriter, r *http.Request) {
 }
 
 type listAccountRequest struct {
-	PageID   int32 `form:"page_id" binding:"required,min=1"`
-	PageSize int32 `form:"page_size" binding:"required,min=5,max=10"`
+	PageID   int32 `form:"page_id"`
+	PageSize int32 `form:"page_size"`
 }
 
 func (s *Server) listAccounts(w http.ResponseWriter, r *http.Request) {
@@ -107,6 +104,7 @@ func (s *Server) listAccounts(w http.ResponseWriter, r *http.Request) {
 		Error(w, http.StatusBadRequest, err)
 		return
 	}
+
 	if pageID == 0 || pageSize == 0 {
 		Error(w, http.StatusBadRequest, errors.New("please provide page_id & page_size param"))
 		return

@@ -11,4 +11,3 @@
 - [SQLC](github.com/kyleconroy/sqlc)
 > ex:\
 **sqlc init**
-

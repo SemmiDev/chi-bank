@@ -1,3 +1,4 @@
+### CREATE USER
 POST http://localhost:8080/api/v1/users
 Accept: application/json
 Content-Type: application/json
@@ -6,10 +7,22 @@ Content-Type: application/json
     "username": "sammidev",
     "password": "sammidev123",
     "full_name": "Sammi Aldhi Yanto",
-    "email": "Sammidev@gmail.com"
+    "email": "sammidev@gmail.com"
 }
 
-###
+### CREATE USER 2
+POST http://localhost:8080/api/v1/users
+Accept: application/json
+Content-Type: application/json
+
+{
+  "username": "sammidev2",
+  "password": "sammidev1232",
+  "full_name": "Sammi Aldhi Yanto2",
+  "email": "sammidev2@gmail.com"
+}
+
+### LOGIN
 POST http://localhost:8080/api/v1/users/login
 Accept: application/json
 Content-Type: application/json
@@ -19,26 +32,47 @@ Content-Type: application/json
   "password": "sammidev123"
 }
 
-###
+
+### LOGIN 2
+POST http://localhost:8080/api/v1/users/login
+Accept: application/json
+Content-Type: application/json
+
+{
+  "username": "sammidev2",
+  "password": "sammidev1232"
+}
+
+### CREATE ACCOUNT
 POST http://localhost:8080/api/v1/accounts
 Accept: application/json
 Content-Type: application/json
-Authorization: bearer v2.local.ACSXCcJ2Wz_tufqQMpwjk_ZJxqXpkf-4c_O7NmZUFRzSR65HeXKEkPmOaXuI-S81zRmR47WXnkrm_v-U7mn-8_We6fBEfD05Fba3B1dChSss8g1XGeVF22Iu0L3osRAguo-zsbOdmsC__Jp6kohd5-uub-ZBCXIxz3cgmei_W6wuzTlVYAKSXe5NOe7m7cMLMtLxfKHesU_oaAf0W-6psmkiBxDZXAvrYiOj6T69-kWDTFonMG_c9ssawz6yFOLWHxOw3LCJeO6uJunG.bnVsbA
+Authorization: bearer v2.local.sjnX3U0XlbyIkAOWcymtv_LufXvE2-ataxf47iWnRGFtQGOhzFkHkQmUmx89cX9A6Cqk39z79oi3Vb1HYpWlMoVMT3U-V1RE3yyNhQPPm2dCXntKUoZIKXwD6y1ZMAEC0_JJc25q4fQsCeXtwHlnYQatCHRdDss3u38CoKO-9aFtqlPrkp5JqGjiVHAJWJKP3KAgjWXQr9HdHMgbNG6Q8-qQn1bj0yJH_XHIlSJ4EhV2x_16m_dOh1la7CQYp3bMnPhzNp_5mh22I5WvAw.bnVsbA
 
 {
   "currency": "IDR"
 }
 
-###
-
-GET http://localhost:8080/api/v1/accounts/1
+### GET ACCOUNT BY ID
+GET http://localhost:8080/api/v1/accounts/2
 Accept: application/json
 Content-Type: application/json
-Authorization: bearer v2.local.sz1xPoHU9JxjtCiHnRy3_62mgQzGKVUZviFYPw136EH-nDKlCUb7m9ZUxaOcizv2B703a9_AUiNdeO0Nkf4Edr3AVNX5mXNxXWjcacaSVSw1LnfqqMddOgnpySXuhASeL0X7_fY999qe4hjrfH7f4gA5xrhV7Me9ddLOH_eix8HHrD0RvZTqv77Ft94sPFsC5P-HayWQ1Lx7PS5DtN4wJa9RD6V5ONSCY1IHdE0wBwNz0nBP58rRfksHqfatrcavtyCh0E_-6RCTA85D.bnVsbA
+Authorization: bearer v2.local.sjnX3U0XlbyIkAOWcymtv_LufXvE2-ataxf47iWnRGFtQGOhzFkHkQmUmx89cX9A6Cqk39z79oi3Vb1HYpWlMoVMT3U-V1RE3yyNhQPPm2dCXntKUoZIKXwD6y1ZMAEC0_JJc25q4fQsCeXtwHlnYQatCHRdDss3u38CoKO-9aFtqlPrkp5JqGjiVHAJWJKP3KAgjWXQr9HdHMgbNG6Q8-qQn1bj0yJH_XHIlSJ4EhV2x_16m_dOh1la7CQYp3bMnPhzNp_5mh22I5WvAw.bnVsbA
 
-
-###
-
+### LIST OF ACCOUNTS
 GET http://localhost:8080/api/v1/accounts?page_id=1&page_size=10
 Accept: application/json
 Authorization: bearer v2.local.sz1xPoHU9JxjtCiHnRy3_62mgQzGKVUZviFYPw136EH-nDKlCUb7m9ZUxaOcizv2B703a9_AUiNdeO0Nkf4Edr3AVNX5mXNxXWjcacaSVSw1LnfqqMddOgnpySXuhASeL0X7_fY999qe4hjrfH7f4gA5xrhV7Me9ddLOH_eix8HHrD0RvZTqv77Ft94sPFsC5P-HayWQ1Lx7PS5DtN4wJa9RD6V5ONSCY1IHdE0wBwNz0nBP58rRfksHqfatrcavtyCh0E_-6RCTA85D.bnVsbA
+
+### TRANSFER
+POST http://localhost:8080/api/v1/transfers
+Accept: application/json
+Content-Type: application/json
+Authorization: bearer v2.local.SXiEcl9i5UTCHOVTthqv2Xr1OBKckPRVfKtFx1Pd8am4AUwvGzmtqmRidhgOitY-l8a-2DJLEf8fnR737H78q9u2IzwPwtAYQ5Bx-TcNWRc0AnkWwPM1PXaEySHlNhTJnBCDwgZ3uv3OpQS0Lk6nx0Alb719uVy34nyIoErIrvqn1MVJRroP-mswcEPgZ3e92zGOahbksxh94fBW-3CNWApGWvm1QZdShfStmatxgQOX6YAAY9p5mhC1nkz6LSwDUjqX3pCAhGnYb4CG.bnVsbA
+
+{
+  "from_account_id": 1,
+  "to_account_id": 2,
+  "amount": 2,
+  "currency": "IDR"
+}

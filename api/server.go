@@ -63,15 +63,21 @@ func (s *Server) setupRouter() {
 	})
 
 	r.Route("/api/v1", func(r chi.Router) {
+		// users route
 		r.Route("/users", func(r chi.Router) {
 			r.Post("/", s.CreateUserHandler)
 			r.Post("/login", s.LoginUserHandler)
 		})
+
+		// accounts route
 		r.With(s.AuthMiddleware).Route("/accounts", func(r chi.Router) {
 			r.Post("/", s.createAccount)
 			r.Get("/", s.listAccounts)
 			r.Get("/{id}", s.getAccount)
 		})
+
+		// transfer route
+		r.With(s.AuthMiddleware).Post("/transfers", s.createTransfer)
 	})
 	s.router = r
 }
